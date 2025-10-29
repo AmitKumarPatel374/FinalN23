@@ -28,3 +28,17 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+userSchema.pre('save',async function(next){
+    let hashadPass = await bcrypt.hash(this.password,10);
+    this.password=hashadPass;
+    next();
+})
+
+userModel.methods.comparePass= async function(password) {
+    let comparePass = await bcrypt.compare(password,this.password);
+    return comparePass;
+}
+
+const userModel = mongoose.model("user",userSchema);
+module.exports=userModel;
