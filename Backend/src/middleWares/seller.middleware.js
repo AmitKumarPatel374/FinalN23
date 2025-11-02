@@ -1,31 +1,31 @@
 const jwt = require("jsonwebtoken");
-const userModel = require("../models/user.model");
+const sellerModel = require("../models/seller.model");
 const sellerMiddleWare = async (req, res, next) => {
     try {
-        let token = req.cookies.token;
+        let sellerToken = req.cookies.sellerToken;
 
-        if (!token) {
+        if (!sellerToken) {
             return res.status(404).json({
                 message: "token not found"
             })
         }
 
-        let isBlackListed = await cacheInstance.get(token);
+        let isBlackListed = await cacheInstance.get(sellerToken);
         if (isBlackListed) {
             return res.status(400).json({
-                message: "token is blackList!"
+                message: "sellerToken is blackList!"
             })
         }
 
-        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        const decode = jwt.verify(sellerToken, process.env.SELLER_JWT_SECRET);
 
         if (!decode) {
             return res.status(400).json({
-                message: "Invalid token!"
+                message: "Invalid sellerToken!"
             })
         }
-        const user = await userModel.findById(decode.id);
-        req.user = user;
+        const seller = await sellerModel.findById(decode.id);
+        req.seller = seller;
         next();
     } catch (error) {
         console.log("error in authMiddleWare->", error);

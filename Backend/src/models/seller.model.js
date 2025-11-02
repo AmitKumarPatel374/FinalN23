@@ -59,11 +59,11 @@ sellerSchema.methods.comparePass = async function (password) {
 }
 
 sellerSchema.methods.generateToken = function () {
-    let token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    let token = jwt.sign({ id: this._id }, process.env.SELLER_JWT_SECRET, {
         expiresIn: "1h"
     })
     return token;
 }
 
-const sellerModel = mongoose.model("user", sellerSchema);
+const sellerModel = mongoose.model("seller", sellerSchema);
 module.exports = sellerModel;

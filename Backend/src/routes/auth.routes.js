@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post('/register',registerController);
 router.post('/login',loginController);
-router.post('/logout',logoutController);
+router.delete('/logout',logoutController);
 router.post('/update-user',authMiddleWare,updateUserController);
-router.post('/get-user',authMiddleWare,getProfileController);
+router.get('/get-user',authMiddleWare,getProfileController);
 
 module.exports=router;
