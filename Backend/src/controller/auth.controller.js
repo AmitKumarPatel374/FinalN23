@@ -1,5 +1,7 @@
 const JWT = require("jsonwebtoken");
 const userModel = require("../models/user.model");
+const cacheInstance = require("../services/cache.service");
+const sendFiles = require("../services/storage.service");
 
 const registerController = async (req, res) => {
     try {
@@ -87,9 +89,93 @@ const loginController = async (req, res) => {
 
 }
 
+const logoutController=async(req,res)=>{
+     try {
+        let token = req.cookies.token;
+        if (!token) {
+            return res.status(404).json({
+                message:"token not found"
+            })
+        }
 
+        await cacheInstance.set(token,"BlackListed");
+
+        res.clearCookie("token");
+
+        return res.status(200).json({
+            message:"user logged out successfully!"
+        })
+     } catch (error) {
+        console.log("error in log in!",error);
+        return res.status(500).json({
+            message:"internal server error!",
+            error:error
+        })
+     }
+}
+
+const updateUserController = async (req,res) => {
+    try {
+        let {  name, username, email, mobile } = req.body;
+
+        if (!name || !email || !username  || !mobile ) {
+            return res.status(404).json({
+                message: "All fields are required",
+            });
+        }
+
+        let uploadedImage;
+        if (req.file) {
+            uploadedImage= await sendFiles(
+                req.file.buffer,
+                req.file.originalname
+            )
+        }
+
+        let updatedUser = await UserModel.findOneAndUpdate(
+            { email },
+            {
+                name,
+                email,
+                username,
+                mobile,
+                profileLogo:uploadedImage.url || "", 
+            }
+        );
+
+        
+        return res.status(201).json({
+            message: "user updated successfully",
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error ",
+            error: error,
+        });
+    }
+}
+
+const getProfileController = async (req, res) => {
+    try {
+        let user = req.user; ///authmiddleware sets this
+        return res.status(200).json({
+            message: "profile fetched successfully!",
+            user: user
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "internal server error!",
+            error: error
+        })
+    }
+}
 
 module.exports= {
     registerController,
-    loginController
+    loginController,
+    logoutController,
+    updateUserController,
+    getProfileController
 }

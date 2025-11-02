@@ -10,6 +10,13 @@ const sellerMiddleWare = async (req, res, next) => {
             })
         }
 
+        let isBlackListed = await cacheInstance.get(token);
+        if (isBlackListed) {
+            return res.status(400).json({
+                message: "token is blackList!"
+            })
+        }
+
         const decode = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!decode) {
@@ -21,11 +28,11 @@ const sellerMiddleWare = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log("error in authMiddleWare->",error);
+        console.log("error in authMiddleWare->", error);
         return res.status(500).json({
             message: "Internal server error!"
         })
     }
 }
 
-module.exports=sellerMiddleWare;
+module.exports = sellerMiddleWare;

@@ -34,33 +34,36 @@ const sellerSchema = new mongoose.Schema({
         maxLength: 12,
         match: [/^[0-9]{12}$/, "please enter a valid phone number!"]
     },
-    products:[
+    sellerProfileLogo: {
+        type: String
+    },
+    products: [
         {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"products"
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "products"
         }
     ]
 }, {
     timestamps: true
 })
 
-sellerSchema.pre('save',async function(next){
-    let hashadPass = await bcrypt.hash(this.password,10);
-    this.password=hashadPass;
+sellerSchema.pre('save', async function (next) {
+    let hashadPass = await bcrypt.hash(this.password, 10);
+    this.password = hashadPass;
     next();
 })
 
-sellerSchema.methods.comparePass= async function(password) {
-    let comparePass = await bcrypt.compare(password,this.password);
+sellerSchema.methods.comparePass = async function (password) {
+    let comparePass = await bcrypt.compare(password, this.password);
     return comparePass;
 }
 
-sellerSchema.methods.generateToken=function() {
-    let token= jwt.sign({id:this._id},process.env.JWT_SECRET,{
-        expiresIn:"1h"
+sellerSchema.methods.generateToken = function () {
+    let token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h"
     })
     return token;
 }
 
-const sellerModel = mongoose.model("user",sellerSchema);
-module.exports=sellerModel;
+const sellerModel = mongoose.model("user", sellerSchema);
+module.exports = sellerModel;

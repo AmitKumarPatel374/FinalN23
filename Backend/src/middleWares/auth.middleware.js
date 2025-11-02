@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
+const cacheInstance = require("../services/cache.service");
 const authMiddleWare = async (req, res, next) => {
     try {
         let token = req.cookies.token;
@@ -7,6 +8,13 @@ const authMiddleWare = async (req, res, next) => {
         if (!token) {
             return res.status(404).json({
                 message: "token not found"
+            })
+        }
+
+        let isBlackListed = await cacheInstance.get(token);
+        if (isBlackListed) {
+            return res.status(400).json({
+                message: "token is blackList!"
             })
         }
 

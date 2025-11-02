@@ -108,7 +108,6 @@ const updateProductController = async (req, res) => {
             images: finalImages,
             sizes,
             colors,
-            createdBy: req.user._id
         })
 
         if (!updatedProduct) {
@@ -153,9 +152,34 @@ const deleteProductController = async (req, res) => {
     }
 }
 
+const getProductController = async (req, res) => {
+    try {
+
+        let product_id = req.params.product_id;
+        const product = await productModel.findById(product_id);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "product not found"
+            })
+        }
+
+        return res.status(201).json({
+            message: "product detail fetched successfully!",
+            product: product
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "internal server error!"
+        })
+    }
+}
+
 module.exports = {
     createProductController,
     getAllProductController,
     updateProductController,
-    deleteProductController
+    deleteProductController,
+    getProductController
 }
