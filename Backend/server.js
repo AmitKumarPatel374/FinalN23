@@ -4,10 +4,15 @@ const connectDB = require("./src/config/db");
 const authRoute = require("./src/routes/auth.routes")
 const productRoute = require("./src/routes/product.routes")
 const sellerRoute = require("./src/routes/seller.routes")
+const cors = require('cors');
 
 const app=express();
 connectDB();
 app.use(express.json());
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 
 
 app.use('/api/auth',authRoute);

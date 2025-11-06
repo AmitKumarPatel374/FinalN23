@@ -4,7 +4,7 @@ const sendFiles = require("../services/storage.service");
 
 const createProductController = async (req, res) => {
     try {
-        const { productName, currency, amount, description, sizes, colors } = req.body;
+        const { productName, currency, amount, description, sizes, colors,category } = req.body;
 
         if (!req.files) {
             return res.status(404).json({
@@ -25,6 +25,7 @@ const createProductController = async (req, res) => {
                 amount
             },
             description,
+            category,
             images: uploadedImages.map((elem) => elem.url),
             sizes,
             colors,
@@ -75,7 +76,7 @@ const getAllProductController = async (req, res) => {
 
 const updateProductController = async (req, res) => {
     try {
-        const { productName, currency, amount, description, sizes, colors } = req.body;
+        const { productName, currency, amount, description, sizes, colors,category } = req.body;
         let product_id= req.params.product_id;
 
         if (!product_id) {
@@ -105,6 +106,7 @@ const updateProductController = async (req, res) => {
                 amount
             },
             description,
+            category,
             images: finalImages,
             sizes,
             colors,
@@ -175,11 +177,35 @@ const getProductController = async (req, res) => {
         })
     }
 }
+const getProductByCategoryController = async (req, res) => {
+    try {
+
+        let category = req.params.category;
+        const product = await productModel.find({category});
+
+        if (!product) {
+            return res.status(404).json({
+                message: "product not found"
+            })
+        }
+
+        return res.status(201).json({
+            message: "product detail fetched successfully!",
+            product: product
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "internal server error!"
+        })
+    }
+}
 
 module.exports = {
     createProductController,
     getAllProductController,
     updateProductController,
     deleteProductController,
-    getProductController
+    getProductController,
+    getProductByCategoryController
 }

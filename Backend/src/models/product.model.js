@@ -20,6 +20,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    category: {
+      type: String,
+      enum: ['ladies', 'men', 'kids', 'beauty', 'home'],
+    },
     images: {
         type: Array,
         default: []
