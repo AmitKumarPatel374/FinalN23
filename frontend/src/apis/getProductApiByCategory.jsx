@@ -5,7 +5,7 @@ export const getProductApiByCategory = async(category)=>{
     try {
         console.log("me call hua...");
         const response = await axiosInstance.get(`/product/${category}`);
-        console.log(response);
+        console.log(response.data);
         if (response) {
             return response.data;
         }

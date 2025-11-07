@@ -6,6 +6,9 @@ const LadiesPage = () => {
 
   const {data,isPending,error}=fetchProductDataHook("ladies");
 
+  if (isPending) {
+    return <h1>Loading...</h1>
+  }
   return (
     <div>
       ladies
